@@ -1,17 +1,15 @@
 package com.example.midterms.tabada_midterms;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnrollmentController {
     public ListView<String> lvDisplay;
@@ -21,14 +19,63 @@ public class EnrollmentController {
     public Button btnBack;
     public ComboBox<String> cbCourse;
     public VBox vbEnrollmentForm;
-    StringBuilder sb = new StringBuilder();
+    public Button btnUpdate;
+
+    private DatabaseConnection db;
+
+    private void display(){
+        lvDisplay.getItems().clear();
+        List<String> students = new ArrayList<>();
+        db.retrieve_tblStudents(students);
+        for(String s: students) lvDisplay.getItems().add(s);
+    }
+    private void showInfo(String title,String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    private String findItem(String course){
+        for(String item : cbCourse.getItems()){
+            if(item.contains(course.trim())){
+                return item;
+            }
+        }
+        return null;
+    }
+    private int findStudent(String name) {
+        for(String item : lvDisplay.getItems()){
+            if(item.contains(name.trim())){
+                return lvDisplay.getItems().indexOf(item);
+            }
+        }
+        return -1;
+    }
 
     public void initialize(){
+        db = new DatabaseConnection();
 
+        List<String> courses = new ArrayList<>();
+        db.retrieve_tblCourses(courses);
+        for(String c: courses) cbCourse.getItems().add(c);
+
+        display();
+
+        cbCourse.getSelectionModel().selectFirst();
+
+        lvDisplay.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String studentName = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" | "));
+                String studentCourse = newValue.substring(newValue.indexOf("-") + 2);
+                tfName.setText(studentName);
+                cbCourse.getSelectionModel().select(findItem(studentCourse));
+            }
+        });
     }
 
     @FXML
-    public void toHomePage(ActionEvent event) throws IOException {
+    public void onBackClick() throws IOException {
         Stage stage = (Stage) vbEnrollmentForm.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("homepage-view.fxml"));
         Scene scene = new Scene(loader.load(), 600, 600);
@@ -36,28 +83,70 @@ public class EnrollmentController {
         stage.setScene(scene);
         stage.show();
     }
+
     @FXML
-    public void onRemoveClick(ActionEvent event){
-        String student = lvDisplay.getSelectionModel().getSelectedItem();
-        lvDisplay.getItems().remove(student);
+    public void onRemoveClick(){
+        String selectedItem = lvDisplay.getSelectionModel().getSelectedItem();
+        if(selectedItem == null) {
+            showInfo("No student selected!","Please select a student in the list to remove.");
+            return;
+        }
+        int id = Integer.parseInt(selectedItem.substring(1,selectedItem.indexOf("]")));
+
+        db.delete_tblStudents(id);
+        lvDisplay.getItems().remove(selectedItem);
+        display();
     }
 
     @FXML
     public void onEnrollClick(){
-        sb.setLength(0);
         String name = tfName.getText();
         String course = cbCourse.getValue();
-
-        if(name.isBlank() || course == null){
+        if(name.isEmpty() || course == null) {
+            showInfo("Incomplete Information!","Please fill out all fields.");
             return;
         }
-        for(int i = 0; i < lvDisplay.getItems().size(); i++){
-            if(lvDisplay.getItems().get(i).contains(name)) return;
-        }
-        sb.append(String.format("- %s (%s)",name,course));
+        int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
 
-        lvDisplay.getItems().add(String.valueOf(sb));
-        tfName.setText("");
+        if(db.insert_tblStudents(name,courseID)) display();
+        tfName.clear();
     }
 
+    @FXML
+    public void onUpdateClick(){
+        String selectedItem = lvDisplay.getSelectionModel().getSelectedItem();
+        if(selectedItem == null) {
+            showInfo("No student selected!","Please select a student in the list to update.");
+            return;
+        }
+
+        int id = Integer.parseInt(selectedItem.substring(1,selectedItem.indexOf("]")));
+        String name = tfName.getText();
+        String course = cbCourse.getValue();
+        if(name.isEmpty() || course == null) {
+            showInfo("Incomplete Information!","Please fill out all fields.");
+            return;
+        }
+
+        int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
+
+        if(db.update_tblStudents(id,name,courseID)) display();
+        tfName.clear();
+    }
+
+    @FXML
+    public void onSearchClick(){
+        String name = tfName.getText();
+        if(name.isEmpty()) {
+            showInfo("Incomplete Information!","Please type the name of the student.");
+            return;
+        }
+
+        int index = findStudent(name);
+        if(index == -1) {
+            showInfo("Student not found!","The student you are looking for is not in the list.");
+            return;
+        }
+        lvDisplay.getSelectionModel().select(index);
+    }
 }

@@ -1,7 +1,9 @@
 package com.example.midterms.tabada_midterms;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class DatabaseConnection {
@@ -9,211 +11,198 @@ public class DatabaseConnection {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-    public void insertData(String tableName, String value1, String value2){
-        String query;
-        if(tableName.toLowerCase().equals("students")){
-            query = "insert into students (studentName, course) values(?,?)";
-        }
-        else if(tableName.toLowerCase().equals("courses")){
-            query = "insert into courses (courseCode, courseName) values(?,?)";
-        }
-        else{
-            return;
-        }
+    public DatabaseConnection(){
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement preparedStatement = connection.prepareStatement(query))
-        {
-            preparedStatement.setString(1,value1);
-            preparedStatement.setString(2,value2);
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "INSERT IGNORE INTO courses (code, course) VALUES(?,?)"
+            )
+        ){
+            pstmt.setString(1,"BSCS");
+            pstmt.setString(2,"BS Computer Science");
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Did not connect to Database.");
         }
     }
 
-    public void deleteData(String tableName, String course){
-        String query;
-        if(tableName.toLowerCase().equals("students")){
-            query = "update students set delete_at=?";
-        }
-        else if(tableName.toLowerCase().equals("courses")){
-            query = "insert into courses (courseCode, courseName) values(?,?)";
-        }
-        else{
-            return;
-        }
+    public boolean insert_tblStudents(String studentName, int courseID){
+        boolean isCommit = false;
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement preparedStatement = connection.prepareStatement(query))
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "insert ignore into students (name, course) values(?,?)"
+            ))
         {
-            preparedStatement.setDate(1, Date.valueOf(String.valueOf(LocalDateTime.now())));
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
+            connection.setAutoCommit(false);
 
-    public void retrieveData(){
+            pstmt.setString(1,studentName);
+            pstmt.setInt(2,courseID);
+            pstmt.executeUpdate();
 
-    }
-
-    public void updateData(){
-
-    }
-
-    package com.csit228.guisql;
-
-import java.sql.*;
-
-    public class InsertData {
-        public static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
-        public static final String USERNAME = "root";
-        public static final String PASSWORD = "";
-
-        public static void main(String[] args) {
-        /*try{
-            Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            System.out.println("DATABASE CONNECTION SUCCESSFUL");
-            Statement statement = connection.createStatement();
-            String query = "create table users ( " +
-                    "id int not null auto_increment primary key," +
-                    "name varchar(50) not null," +
-                    "email varchar(100) not null," +
-                    "password varchar(50) null)";
-            statement.execute(query);
-            connection.close();
-            System.out.println("CONNECTION CLOSED");
-
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }*/
-            Connection connection = null;
-            try{
-                connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "insert into users (name,email) values (?,?)"
-                );
-
-                preparedStatement.setString(1,"John");
-                preparedStatement.setString(2,"test@account.com");
-
-            }catch (SQLException e){
-                System.out.println(e.getMessage());
+            int rowsAffected = pstmt.executeUpdate();
+            if(rowsAffected > 0) {
+                connection.commit();
+                isCommit = true;
             }
-
-        }
-    }
-
-    /*public class InsertData {
-        public static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
-        public static final String USERNAME = "root";
-        public static final String PASSWORD = "";
-
-        public static void main(String[] args) {
-            try{
-                Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-                System.out.println("DATABASE CONNECTION SUCCESSFUL");
-                Statement statement = connection.createStatement();
-                String query = "create table users ( " +
-                        "id int not null auto_increment primary key," +
-                        "name varchar(50) not null," +
-                        "email varchar(100) not null," +
-                        "password varchar(50) null)";
-                statement.execute(query);
-                connection.close();
-                System.out.println("CONNECTION CLOSED");
-
-            }catch (SQLException e){
-                System.out.println(e.getMessage());
-            }
-            Connection connection = null;
-            try{
-                connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "insert into users (name,email) values (?,?)"
-                );
-
-                preparedStatement.setString(1,"John");
-                preparedStatement.setString(2,"test@account.com");
-
-            }catch (SQLException e){
-                System.out.println(e.getMessage());
-            }
-
-        }
-    }*/
-    /*public class DeleteData {
-    public static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
-    public static final String USERNAME = "root";
-    public static final String PASSWORD = "";
-    public static void main(String[] args) {
-        Connection connection = null;
-        try{
-            connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "delete from users where id=?"
-            );
-
-            int id = 2;
-            preparedStatement.setInt(1,id);
-
+            else connection.rollback();
         }catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("From insert students" + e.getMessage());
         }
+        return isCommit;
     }
-}*/
-    /*package com.csit228.guisql;
 
-import java.sql.*;
+    public boolean insert_tblCourses(String courseCode, String courseName){
+        boolean isCommit = false;
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "insert ignore into courses (code, course) values(?,?)"
+            ))
+        {
+            connection.setAutoCommit(false);
 
-public class UpdateData {
-    public static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
-    public static final String USERNAME = "root";
-    public static final String PASSWORD = "";
-    public static void main(String[] args) {
-        Connection connection = null;
-        try{
-            connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update users set name=?, email=? where id=?"
-            );
-            String name = "John Winston W. Tabada";
-            String email = "test@account.com";
-            int id = 2;
-            preparedStatement.setString(1,name);
-            preparedStatement.setString(2,email);
-            preparedStatement.setInt(3,id);
+            pstmt.setString(1,courseCode);
+            pstmt.setString(2,courseName);
+            pstmt.executeUpdate();
 
-            connection.close();
+            int rowsAffected = pstmt.executeUpdate();
+            if(rowsAffected > 0) {
+                connection.commit();
+                isCommit = true;
+            }
+            else connection.rollback();
         }catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("From insert courses" + e.getMessage());
+        }
+        return isCommit;
+    }
+
+    public void delete_tblStudents(int id){
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "update students set deleted_at=? where id=?"
+            ))
+        {
+            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
+            pstmt.setInt(2,id);
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            System.out.println("From delete students" +e.getMessage());
         }
     }
-}
-*/
-    /*package com.csit228.guisql;
 
-import java.sql.*;
+    public void delete_tblCourses(int id){
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "update courses set deleted_at=? where id=?"
+            ))
+        {
 
-public class RetrieveData {
-    public static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
-    public static final String USERNAME = "root";
-    public static final String PASSWORD = "";
-    public static void main(String[] args) {
-        Connection connection = null;
-        try{
-            connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            Statement statement = connection.createStatement();
-            String query = "select * from users";
+            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDateTime.now())));
+            pstmt.setInt(2,id);
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            System.out.println("From delete courses" +e.getMessage());
+        }
+    }
 
-            ResultSet resultSet = statement.executeQuery(query);
-            while(resultSet.next()){
-                int id = resultSet.getInt(1);
-                String name = resultSet.getString(2);
-                String email = resultSet.getString(3);
-                System.out.printf("[%d] %s - %s\n",id,name,email);
+    public void retrieve_tblStudents(List<String> students){
+        String queryStudents = "SELECT * FROM students WHERE deleted_at IS NULL";
+        String queryCode = "SELECT code FROM courses WHERE id = ? && deleted_at IS NULL";
+        String queryProgram = "SELECT course FROM courses WHERE id = ? && deleted_at IS NULL";
+
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(queryStudents)) {
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int courseID = resultSet.getInt("course");
+
+                try (PreparedStatement pstmtCode = connection.prepareStatement(queryCode);
+                     PreparedStatement pstmtProgram = connection.prepareStatement(queryProgram)) {
+
+                    pstmtCode.setInt(1, courseID);
+                    ResultSet rsCode = pstmtCode.executeQuery();
+                    String code = rsCode.next() ? rsCode.getString("code") : "N/A";
+
+                    pstmtProgram.setInt(1, courseID);
+                    ResultSet rsProgram = pstmtProgram.executeQuery();
+                    String course = rsProgram.next() ? rsProgram.getString("course") : "N/A";
+
+                    students.add("[" + id + "] " + name + " | " + code + " - " + course);
+        }
             }
         }catch (SQLException e){
-                e.printStackTrace();
+            System.out.println("From retrieve students" +e.getMessage());
         }
     }
-}
-*/
+
+    public void retrieve_tblCourses(List<String> courses){
+        String query = "SELECT * FROM courses WHERE deleted_at IS NULL";
+
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("course");
+                String code = resultSet.getString("code");
+
+                courses.add("[" + id + "] " + code + " - " + name);
+            }
+        }catch (SQLException e){
+            System.out.println("From retrieve courses" +e.getMessage());
+        }
+    }
+
+    public boolean update_tblStudents(int id, String studentName, int courseID){
+        boolean isCommit = false;
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "update students set name=?, course=? where id=?"
+            ))
+        {
+            connection.setAutoCommit(false);
+
+            pstmt.setString(1,studentName);
+            pstmt.setInt(2,courseID);
+            pstmt.setInt(3,id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if(rowsAffected > 0) {
+                connection.commit();
+                isCommit = true;
+            }
+            else connection.rollback();
+        }catch (SQLException e){
+            System.out.println("From update students" +e.getMessage());
+        }
+        return isCommit;
+    }
+
+    public boolean update_tblCourses(int id, String courseName, String courseCode){
+        boolean isCommit = false;
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "update courses set course=?, code=? where id=?"
+            ))
+        {
+            connection.setAutoCommit(false);
+
+            pstmt.setString(1,courseName);
+            pstmt.setString(2,courseCode);
+            pstmt.setInt(3,id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if(rowsAffected > 0) {
+                connection.commit();
+                isCommit = true;
+            }
+            else connection.rollback();
+        }catch (SQLException e){
+            System.out.println("From update courses" + e.getMessage());
+        }
+        return isCommit;
+    }
 }
