@@ -29,14 +29,13 @@ public class DatabaseConnection {
         boolean isCommit = false;
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
             PreparedStatement pstmt = connection.prepareStatement(
-                    "insert ignore into students (name, course) values(?,?)"
+                    "insert into students (name, course) values(?,?)"
             ))
         {
             connection.setAutoCommit(false);
 
             pstmt.setString(1,studentName);
             pstmt.setInt(2,courseID);
-            pstmt.executeUpdate();
 
             int rowsAffected = pstmt.executeUpdate();
             if(rowsAffected > 0) {
@@ -61,7 +60,6 @@ public class DatabaseConnection {
 
             pstmt.setString(1,courseCode);
             pstmt.setString(2,courseName);
-            pstmt.executeUpdate();
 
             int rowsAffected = pstmt.executeUpdate();
             if(rowsAffected > 0) {
@@ -96,7 +94,7 @@ public class DatabaseConnection {
             ))
         {
 
-            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDateTime.now())));
+            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
             pstmt.setInt(2,id);
             pstmt.executeUpdate();
         }catch (SQLException e){

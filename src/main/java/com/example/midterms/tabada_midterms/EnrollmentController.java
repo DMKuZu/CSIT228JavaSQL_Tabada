@@ -20,6 +20,8 @@ public class EnrollmentController {
     public ComboBox<String> cbCourse;
     public VBox vbEnrollmentForm;
     public Button btnUpdate;
+    public Button btnFilter;
+    public Button btnRefresh;
 
     private DatabaseConnection db;
 
@@ -44,13 +46,17 @@ public class EnrollmentController {
         }
         return null;
     }
-    private int findStudent(String name) {
-        for(String item : lvDisplay.getItems()){
-            if(item.contains(name.trim())){
-                return lvDisplay.getItems().indexOf(item);
+    private boolean filterStudent(String name, List<String> students) {
+        boolean hasStudent = false;
+        lvDisplay.getItems().clear();
+
+        for(String s: students) {
+            if(s.toLowerCase().contains(name.toLowerCase().trim())){
+                lvDisplay.getItems().add(s);
+                hasStudent = true;
             }
         }
-        return -1;
+        return hasStudent;
     }
 
     public void initialize(){
@@ -67,7 +73,7 @@ public class EnrollmentController {
         lvDisplay.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 String studentName = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" | "));
-                String studentCourse = newValue.substring(newValue.indexOf("-") + 2);
+                String studentCourse = newValue.substring(newValue.indexOf("-") + 1);
                 tfName.setText(studentName);
                 cbCourse.getSelectionModel().select(findItem(studentCourse));
             }
@@ -135,18 +141,26 @@ public class EnrollmentController {
     }
 
     @FXML
-    public void onSearchClick(){
+    public void onFilterClick(){
         String name = tfName.getText();
         if(name.isEmpty()) {
             showInfo("Incomplete Information!","Please type the name of the student.");
             return;
         }
 
-        int index = findStudent(name);
-        if(index == -1) {
-            showInfo("Student not found!","The student you are looking for is not in the list.");
-            return;
+        List<String> students = new ArrayList<>();
+        db.retrieve_tblStudents(students);
+
+        if(!filterStudent(name,students)) {
+            showInfo("Student not found!","The student does not exist.");
+            display();
         }
-        lvDisplay.getSelectionModel().select(index);
     }
+
+    @FXML
+    public void onRefreshClick(){
+        display();
+        tfName.clear();
+    }
+
 }

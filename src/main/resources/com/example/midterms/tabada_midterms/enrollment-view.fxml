@@ -40,7 +40,8 @@
             <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBackClick" text="Back to HomePage" GridPane.columnIndex="3" />
             <Label text="Student Enrollment Form" GridPane.columnIndex="1" GridPane.columnSpan="2" />
             <Button fx:id="btnUpdate" layoutX="310.0" layoutY="408.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Update" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Button fx:id="btnSearch" layoutX="110.0" layoutY="408.0" mnemonicParsing="false" onAction="#onSearchClick" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Button fx:id="btnFilter" layoutX="110.0" layoutY="408.0" mnemonicParsing="false" onAction="#onFilterClick" text="Filter" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Button fx:id="btnRefresh" layoutX="310.0" layoutY="408.0" mnemonicParsing="false" onAction="#onRefreshClick" text="Refresh" />
          </children>
       </GridPane>
    </children>
