@@ -73,7 +73,7 @@ public class EnrollmentController {
         lvDisplay.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 String studentName = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" | "));
-                String studentCourse = newValue.substring(newValue.indexOf("-") + 1);
+                String studentCourse = newValue.substring(newValue.indexOf("-") + 2);
                 tfName.setText(studentName);
                 cbCourse.getSelectionModel().select(findItem(studentCourse));
             }
@@ -84,7 +84,7 @@ public class EnrollmentController {
     public void onBackClick() throws IOException {
         Stage stage = (Stage) vbEnrollmentForm.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("homepage-view.fxml"));
-        Scene scene = new Scene(loader.load(), 600, 600);
+        Scene scene = new Scene(loader.load(), 400, 200);
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

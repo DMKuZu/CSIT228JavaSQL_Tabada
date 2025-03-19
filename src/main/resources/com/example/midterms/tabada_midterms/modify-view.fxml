@@ -33,11 +33,12 @@
             <ListView fx:id="lvDisplay" prefHeight="113.0" prefWidth="452.0" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="2" />
             <TextField fx:id="tfCourseCode" promptText="Course Code" GridPane.rowIndex="3" />
             <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#onRemoveClick" text="Remove" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Button fx:id="btnSave" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onEnrollClick" text="Save" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#toHomePage" text="Back to HomePage" GridPane.columnIndex="3" />
+            <Button fx:id="btnSave" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSaveClick" text="Update" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBackClick" text="Back to HomePage" GridPane.columnIndex="3" />
             <Label text="Course Form" GridPane.columnIndex="1" GridPane.columnSpan="2" />
             <TextField fx:id="tfCourseName" layoutX="10.0" layoutY="226.0" promptText="Course Name" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-            <Button fx:id="btnAdd" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="10.0" layoutY="363.0" mnemonicParsing="false" onAction="#onEnrollClick" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button fx:id="btnAdd" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="10.0" layoutY="363.0" mnemonicParsing="false" onAction="#onAddClick" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button fx:id="btnRefresh" layoutX="236.0" layoutY="402.0" mnemonicParsing="false" onAction="#onRefreshClick" text="Refresh" GridPane.columnIndex="3" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

@@ -87,6 +87,20 @@ public class DatabaseConnection {
         }
     }
 
+    private void cascade_delete(int courseID){
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "update students set deleted_at=? where course=?"
+            ))
+        {
+            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
+            pstmt.setInt(2,courseID);
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            System.out.println("From cascade delete students" +e.getMessage());
+        }
+    }
+
     public void delete_tblCourses(int id){
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
             PreparedStatement pstmt = connection.prepareStatement(
@@ -97,6 +111,7 @@ public class DatabaseConnection {
             pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
             pstmt.setInt(2,id);
             pstmt.executeUpdate();
+            cascade_delete(id);
         }catch (SQLException e){
             System.out.println("From delete courses" +e.getMessage());
         }
