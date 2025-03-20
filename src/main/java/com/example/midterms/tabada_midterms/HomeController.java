@@ -19,7 +19,7 @@ public class HomeController {
     public void toEnrollmentForm() throws IOException {
         Stage stage = (Stage) vbHomePage.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("enrollment-view.fxml"));
-        Scene scene = new Scene(loader.load(), 600, 600);
+        Scene scene = new Scene(loader.load(), 600, 400);
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
@@ -29,7 +29,7 @@ public class HomeController {
     public void toCourseForm() throws IOException {
         Stage stage = (Stage) vbHomePage.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("modify-view.fxml"));
-        Scene scene = new Scene(loader.load(), 600, 600);
+        Scene scene = new Scene(loader.load(), 600, 400);
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

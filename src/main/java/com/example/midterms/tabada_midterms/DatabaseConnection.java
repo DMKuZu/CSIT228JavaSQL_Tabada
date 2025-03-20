@@ -189,11 +189,11 @@ public class DatabaseConnection {
 
                     pstmtCode.setInt(1, courseID);
                     ResultSet rsCode = pstmtCode.executeQuery();
-                    String code = rsCode.getString("code");
+                    String code = rsCode.next() ? rsCode.getString("code") : "";
 
                     pstmtProgram.setInt(1, courseID);
                     ResultSet rsProgram = pstmtProgram.executeQuery();
-                    String course = rsProgram.getString("course");
+                    String course = rsProgram.next() ? rsProgram.getString("course") : "";
 
                     students.add("[" + id + "] " + name + " | " + code + " | " + course);
         }
