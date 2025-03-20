@@ -30,6 +30,7 @@ public class EnrollmentController {
         List<String> students = new ArrayList<>();
         db.retrieve_tblStudents(students);
         for(String s: students) lvDisplay.getItems().add(s);
+        tfName.clear();
     }
     private void showInfo(String title,String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -119,7 +120,6 @@ public class EnrollmentController {
         int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
 
         if(db.insert_tblStudents(name,courseID)) display();
-        tfName.clear();
     }
 
     @FXML
@@ -145,7 +145,6 @@ public class EnrollmentController {
         int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
 
         if(db.update_tblStudents(id,name,courseID)) display();
-        tfName.clear();
     }
 
     @FXML
@@ -172,7 +171,6 @@ public class EnrollmentController {
     @FXML
     public void onRefreshClick(){
         display();
-        tfName.clear();
     }
 
 }

@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="fe580da1-369a-4d66-8108-ab5d30c2b6d6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/csit228f3.sql" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/DatabaseConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/HomeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/midterms/tabada_midterms/enrollment-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/midterms/tabada_midterms/enrollment-view.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/midterms/tabada_midterms/modify-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/midterms/tabada_midterms/modify-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/EnrollmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/EnrollmentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/ModifyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/midterms/tabada_midterms/ModifyController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

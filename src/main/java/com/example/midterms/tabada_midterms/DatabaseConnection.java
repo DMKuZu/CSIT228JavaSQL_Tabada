@@ -30,8 +30,7 @@ public class DatabaseConnection {
                     "CREATE TABLE IF NOT EXISTS courses (" +
                             "id INT PRIMARY KEY AUTO_INCREMENT," +
                             "code VARCHAR(10) NOT NULL UNIQUE," +
-                            "course VARCHAR(255) NOT NULL," +
-                            "deleted_at DATE DEFAULT NULL" +
+                            "course VARCHAR(255) NOT NULL" +
                             ")"
             );
         }
@@ -43,7 +42,6 @@ public class DatabaseConnection {
                             "id INT PRIMARY KEY AUTO_INCREMENT," +
                             "name VARCHAR(255) NOT NULL," +
                             "course INT NOT NULL," +
-                            "deleted_at DATE DEFAULT NULL," +
                             "FOREIGN KEY (course) REFERENCES courses(id)" +
                             "ON DELETE CASCADE " +
                             "ON UPDATE CASCADE" +
@@ -56,7 +54,7 @@ public class DatabaseConnection {
                 "INSERT IGNORE INTO courses (code, course) VALUES(?,?)"
         )) {
             pstmt.setString(1, "BSCS");
-            pstmt.setString(2, "BS Computer Science");
+            pstmt.setString(2, "BS - Computer Science");
             pstmt.executeUpdate();
         }
     }
@@ -129,51 +127,33 @@ public class DatabaseConnection {
     public void delete_tblStudents(int id){
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
             PreparedStatement pstmt = connection.prepareStatement(
-                    "update students set deleted_at=? where id=?"
+                    "DELETE FROM students WHERE id = ?"
             ))
         {
-            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
-            pstmt.setInt(2,id);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }catch (SQLException e){
             System.out.println("From delete students" +e.getMessage());
         }
     }
 
-    private void cascade_delete(int courseID){
-        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement pstmt = connection.prepareStatement(
-                    "update students set deleted_at=? where course=?"
-            ))
-        {
-            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
-            pstmt.setInt(2,courseID);
-            pstmt.executeUpdate();
-        }catch (SQLException e){
-            System.out.println("From cascade delete students" +e.getMessage());
-        }
-    }
-
     public void delete_tblCourses(int id){
         try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
             PreparedStatement pstmt = connection.prepareStatement(
-                    "update courses set deleted_at=? where id=?"
+                    "DELETE FROM courses WHERE id = ?"
             ))
         {
-
-            pstmt.setDate(1, Date.valueOf(String.valueOf(LocalDate.now())));
-            pstmt.setInt(2,id);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
-            cascade_delete(id);
         }catch (SQLException e){
             System.out.println("From delete courses" +e.getMessage());
         }
     }
 
     public void retrieve_tblStudents(List<String> students){
-        String queryStudents = "SELECT * FROM students WHERE deleted_at IS NULL";
-        String queryCode = "SELECT code FROM courses WHERE id = ? && deleted_at IS NULL";
-        String queryProgram = "SELECT course FROM courses WHERE id = ? && deleted_at IS NULL";
+        String queryStudents = "SELECT * FROM students";
+        String queryCode = "SELECT code FROM courses WHERE id = ?";
+        String queryProgram = "SELECT course FROM courses WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              Statement statement = connection.createStatement();
@@ -204,7 +184,7 @@ public class DatabaseConnection {
     }
 
     public void retrieve_tblCourses(List<String> courses){
-        String query = "SELECT * FROM courses WHERE deleted_at IS NULL";
+        String query = "SELECT * FROM courses";
 
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              Statement statement = connection.createStatement();

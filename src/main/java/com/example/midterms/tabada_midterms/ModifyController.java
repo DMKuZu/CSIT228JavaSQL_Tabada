@@ -33,6 +33,8 @@ public class ModifyController {
         List<String> courses = new ArrayList<>();
         db.retrieve_tblCourses(courses);
         for(String c: courses) lvDisplay.getItems().add(c);
+        tfCourseName.clear();
+        tfCourseCode.clear();
     }
     private void showInfo(String title,String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -70,8 +72,6 @@ public class ModifyController {
     @FXML
     public void onRefreshClick(){
         display();
-        tfCourseName.clear();
-        tfCourseCode.clear();
     }
 
     @FXML
@@ -86,8 +86,6 @@ public class ModifyController {
         db.delete_tblCourses(id);
         lvDisplay.getItems().remove(selectedItem);
         display();
-        tfCourseName.clear();
-        tfCourseCode.clear();
     }
 
     @FXML
@@ -104,8 +102,6 @@ public class ModifyController {
         }
 
         if(db.insert_tblCourses(code,course)) display();
-        tfCourseName.clear();
-        tfCourseCode.clear();
     }
 
     @FXML
@@ -129,7 +125,5 @@ public class ModifyController {
         }
 
         if(db.update_tblCourses(id,course,code)) display();
-        tfCourseName.clear();
-        tfCourseCode.clear();
     }
 }
