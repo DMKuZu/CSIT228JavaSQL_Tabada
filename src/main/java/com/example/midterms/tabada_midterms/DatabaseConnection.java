@@ -7,21 +7,74 @@ import java.util.List;
 
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/csit228f3";
+    private String URL = "jdbc:mysql://localhost:3306";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-    public DatabaseConnection(){
-        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-            PreparedStatement pstmt = connection.prepareStatement(
-                    "INSERT IGNORE INTO courses (code, course) VALUES(?,?)"
-            )
-        ){
-            pstmt.setString(1,"BSCS");
-            pstmt.setString(2,"BS Computer Science");
+    private void createDatabase(Connection connection) throws SQLException{
+        try (Statement statement = connection.createStatement()) {
+            String dbName = "csit228f3"; //set whatever dbname you want
+
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '"+dbName+"'"
+            );
+            if (!resultSet.next()) {
+                statement.executeUpdate("CREATE DATABASE "+dbName);
+            }
+            if(!URL.contains("/"+dbName)) URL += "/"+dbName;
+        }
+    }
+    private void createCourses(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS courses (" +
+                            "id INT PRIMARY KEY AUTO_INCREMENT," +
+                            "code VARCHAR(10) NOT NULL UNIQUE," +
+                            "course VARCHAR(255) NOT NULL," +
+                            "deleted_at DATE DEFAULT NULL" +
+                            ")"
+            );
+        }
+    }
+    private void createStudents(Connection connection) throws SQLException{
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS students (" +
+                            "id INT PRIMARY KEY AUTO_INCREMENT," +
+                            "name VARCHAR(255) NOT NULL," +
+                            "course INT NOT NULL," +
+                            "deleted_at DATE DEFAULT NULL," +
+                            "FOREIGN KEY (course) REFERENCES courses(id)" +
+                            "ON DELETE CASCADE " +
+                            "ON UPDATE CASCADE" +
+                            ")"
+            );
+        }
+    }
+    private void setInitialCourses(Connection connection) throws SQLException {
+        try (PreparedStatement pstmt = connection.prepareStatement(
+                "INSERT IGNORE INTO courses (code, course) VALUES(?,?)"
+        )) {
+            pstmt.setString(1, "BSCS");
+            pstmt.setString(2, "BS Computer Science");
             pstmt.executeUpdate();
+        }
+    }
+
+    public DatabaseConnection(){
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD)) {
+            createDatabase(connection);
+        }
+        catch (SQLException e) {
+            System.out.println("Database not created " + e.getMessage());
+        }
+
+        try(Connection connection = DriverManager.getConnection(URL,USERNAME,PASSWORD)) {
+            createCourses(connection);
+            createStudents(connection);
+            setInitialCourses(connection);
         } catch (SQLException e) {
-            System.out.println("Did not connect to Database.");
+            System.out.println("Did not connect to Database. " + e.getMessage());
         }
     }
 
@@ -136,13 +189,13 @@ public class DatabaseConnection {
 
                     pstmtCode.setInt(1, courseID);
                     ResultSet rsCode = pstmtCode.executeQuery();
-                    String code = rsCode.next() ? rsCode.getString("code") : "N/A";
+                    String code = rsCode.getString("code");
 
                     pstmtProgram.setInt(1, courseID);
                     ResultSet rsProgram = pstmtProgram.executeQuery();
-                    String course = rsProgram.next() ? rsProgram.getString("course") : "N/A";
+                    String course = rsProgram.getString("course");
 
-                    students.add("[" + id + "] " + name + " | " + code + " - " + course);
+                    students.add("[" + id + "] " + name + " | " + code + " | " + course);
         }
             }
         }catch (SQLException e){
@@ -162,7 +215,7 @@ public class DatabaseConnection {
                 String name = resultSet.getString("course");
                 String code = resultSet.getString("code");
 
-                courses.add("[" + id + "] " + code + " - " + name);
+                courses.add("[" + id + "] " + code + " | " + name);
             }
         }catch (SQLException e){
             System.out.println("From retrieve courses" +e.getMessage());

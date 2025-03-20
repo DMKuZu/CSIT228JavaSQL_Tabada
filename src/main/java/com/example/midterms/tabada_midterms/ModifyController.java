@@ -42,7 +42,6 @@ public class ModifyController {
         alert.showAndWait();
     }
 
-
     public void initialize() throws IOException {
         db = new DatabaseConnection();
 
@@ -50,8 +49,8 @@ public class ModifyController {
 
         lvDisplay.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                String courseCode = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" - "));
-                String courseName = newValue.substring(newValue.indexOf("-") + 2);
+                String courseCode = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" | "));
+                String courseName = newValue.substring(newValue.indexOf("|") + 2);
                 tfCourseName.setText(courseName);
                 tfCourseCode.setText(courseCode);
             }
@@ -99,6 +98,10 @@ public class ModifyController {
             showInfo("Incomplete Information!","Please fill out all fields.");
             return;
         }
+        if(course.contains("|") || code.contains("|")) {
+            showInfo("No special characters Allowed", "Course is invalid.");
+            return;
+        }
 
         if(db.insert_tblCourses(code,course)) display();
         tfCourseName.clear();
@@ -118,6 +121,10 @@ public class ModifyController {
         String code = tfCourseCode.getText();
         if(course.isEmpty() || code.isEmpty()) {
             showInfo("Incomplete Information!","Please fill out all fields.");
+            return;
+        }
+        if(course.contains("|") || code.contains("|")) {
+            showInfo("No special characters Allowed", "Course is invalid.");
             return;
         }
 

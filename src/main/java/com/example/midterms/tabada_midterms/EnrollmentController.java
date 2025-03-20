@@ -73,7 +73,7 @@ public class EnrollmentController {
         lvDisplay.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 String studentName = newValue.substring(newValue.indexOf("]") + 2, newValue.indexOf(" | "));
-                String studentCourse = newValue.substring(newValue.indexOf("-") + 2);
+                String studentCourse = newValue.substring(newValue.indexOf("|") + 2);
                 tfName.setText(studentName);
                 cbCourse.getSelectionModel().select(findItem(studentCourse));
             }
@@ -112,6 +112,10 @@ public class EnrollmentController {
             showInfo("Incomplete Information!","Please fill out all fields.");
             return;
         }
+        if(name.contains("|")){
+            showInfo("No special characters Allowed","Student name is invalid.");
+            return;
+        }
         int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
 
         if(db.insert_tblStudents(name,courseID)) display();
@@ -133,6 +137,10 @@ public class EnrollmentController {
             showInfo("Incomplete Information!","Please fill out all fields.");
             return;
         }
+        if(name.contains("|")){
+            showInfo("No special characters Allowed","Student name is invalid.");
+            return;
+        }
 
         int courseID = Integer.parseInt(course.substring(1,course.indexOf("]")));
 
@@ -145,6 +153,10 @@ public class EnrollmentController {
         String name = tfName.getText();
         if(name.isEmpty()) {
             showInfo("Incomplete Information!","Please type the name of the student.");
+            return;
+        }
+        if(name.contains("|")){
+            showInfo("No special characters Allowed","Student name is invalid.");
             return;
         }
 
